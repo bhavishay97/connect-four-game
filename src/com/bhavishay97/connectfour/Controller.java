@@ -3,6 +3,7 @@ package com.bhavishay97.connectfour;
 import javafx.animation.TranslateTransition;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Point2D;
 import javafx.scene.control.Label;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
@@ -16,6 +17,8 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.ResourceBundle;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 public class Controller implements Initializable {
 
@@ -101,8 +104,8 @@ public class Controller implements Initializable {
     private void insertDisc(Disc disc, int column) {
 
         int row = ROWS - 1;
-        while (row > 0) {
-            if (insertedDiscArray[row][column] == null)
+        while (row >= 0) {
+            if (getDiscIfPresent(row, column) == null)
                 break;
             row--;
         }
@@ -120,7 +123,8 @@ public class Controller implements Initializable {
         translateTransition.setOnFinished(actionEvent -> {
 
             if (gameEnded(finalRow, column)) {
-                // TODO
+                gameOver();
+                return;
             }
 
             isPlayerOneTurn = !isPlayerOneTurn;
@@ -129,8 +133,74 @@ public class Controller implements Initializable {
         translateTransition.play();
     }
 
-    private void gameEnded(int row, int column) {
-        // TODO
+    private boolean gameEnded(int row, int column) {
+
+        // Vertical points
+        List<Point2D> verticalPoints = IntStream.rangeClosed(row - 3, row + 3)
+                                        .mapToObj(r -> new Point2D(r, column))
+                                        .collect(Collectors.toList());
+
+        // Horizontal points
+        List<Point2D> horizontalPoints = IntStream.rangeClosed(column - 3, column + 3)
+                .mapToObj(col -> new Point2D(row, col))
+                .collect(Collectors.toList());
+
+        // Diagonal 1 points
+        Point2D startPoint1 = new Point2D(row -3, column + 3);
+        List<Point2D> diagonal1Points = IntStream.rangeClosed(0, 6)
+                                        .mapToObj(i -> startPoint1.add(i, -i))
+                                        .collect(Collectors.toList());
+
+        // Diagonal 2 points
+        Point2D startPoint2 = new Point2D(row -3, column - 3);
+        List<Point2D> diagonal2Points = IntStream.rangeClosed(0, 6)
+                .mapToObj(i -> startPoint2.add(i, i))
+                .collect(Collectors.toList());
+
+        boolean isEnded = checkCombinations(verticalPoints) ||
+                            checkCombinations(horizontalPoints) ||
+                            checkCombinations(diagonal1Points) ||
+                            checkCombinations(diagonal2Points);
+
+        return isEnded;
+
+    }
+
+    private boolean checkCombinations(List<Point2D> points) {
+
+        int chain = 0;
+
+        for (Point2D point: points) {
+
+            int rowIndexForArray = (int) point.getX();
+            int colIndexForArray = (int) point.getY();
+
+            Disc disc = getDiscIfPresent(rowIndexForArray, colIndexForArray);
+
+            if (disc != null && disc.isPlayerOneMove == isPlayerOneTurn) {
+
+                chain++;
+
+                if (chain == 4) {
+                    return true;
+                }
+            } else {
+                chain = 0;
+            }
+        }
+        return false;
+    }
+
+    private Disc getDiscIfPresent(int row, int column) {
+        if (row >= ROWS || row < 0 || column >= COLUMNS || column < 0) {
+            return null;
+        }
+        return insertedDiscArray[row][column];
+    }
+
+    private void gameOver() {
+        String winner = isPlayerOneTurn ? PLAYER_ONE : PLAYER_TWO;
+        System.out.println("Winner is: " + winner);
     }
 
     private static class Disc extends Circle {
