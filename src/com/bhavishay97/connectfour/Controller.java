@@ -1,5 +1,6 @@
 package com.bhavishay97.connectfour;
 
+import javafx.animation.TranslateTransition;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.Label;
@@ -9,6 +10,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Circle;
 import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.Shape;
+import javafx.util.Duration;
 
 import java.net.URL;
 import java.util.ArrayList;
@@ -27,6 +29,9 @@ public class Controller implements Initializable {
     private static String PLAYER_TWO = "Player 2";
 
     private boolean isPlayerOneTurn = true;
+
+    private Disc[][] insertedDiscArray = new Disc[ROWS][COLUMNS];
+
 
     @FXML
     public GridPane rootGridPane;
@@ -79,8 +84,8 @@ public class Controller implements Initializable {
             rectangle.setFill(Color.TRANSPARENT);
             rectangle.setTranslateX(col * (CIRCLE_DIAMETER + 5) + (CIRCLE_DIAMETER / 4));
 
-            rectangle.setOnMouseEntered(event -> rectangle.setFill(Color.valueOf("#eeeeee26")));
-            rectangle.setOnMouseExited(event -> rectangle.setFill(Color.TRANSPARENT));
+            rectangle.setOnMouseEntered(mouseEvent -> rectangle.setFill(Color.valueOf("#eeeeee26")));
+            rectangle.setOnMouseExited(mouseEvent -> rectangle.setFill(Color.TRANSPARENT));
 
             final int finalCol = col;
             rectangle.setOnMouseClicked(event -> {
@@ -93,8 +98,39 @@ public class Controller implements Initializable {
         return rectangleList;
     }
 
-    private static void insertDisc(Disc disc, int column) {
+    private void insertDisc(Disc disc, int column) {
 
+        int row = ROWS - 1;
+        while (row > 0) {
+            if (insertedDiscArray[row][column] == null)
+                break;
+            row--;
+        }
+
+        if (row < 0) return;
+
+        insertedDiscArray[row][column] = disc;    // structural change
+        insertedDiscsPane.getChildren().add(disc);  // visual change
+
+        disc.setTranslateX(column * (CIRCLE_DIAMETER + 5) + (CIRCLE_DIAMETER / 4));
+
+        TranslateTransition translateTransition = new TranslateTransition(Duration.seconds(0.5), disc);
+        translateTransition.setToY(row * (CIRCLE_DIAMETER + 5) + (CIRCLE_DIAMETER / 4));
+        final int finalRow = row;
+        translateTransition.setOnFinished(actionEvent -> {
+
+            if (gameEnded(finalRow, column)) {
+                // TODO
+            }
+
+            isPlayerOneTurn = !isPlayerOneTurn;
+            playerNameLabel.setText(isPlayerOneTurn ? PLAYER_ONE : PLAYER_TWO);
+        });
+        translateTransition.play();
+    }
+
+    private void gameEnded(int row, int column) {
+        // TODO
     }
 
     private static class Disc extends Circle {
