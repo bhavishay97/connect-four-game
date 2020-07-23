@@ -71,6 +71,7 @@ public class Controller implements Initializable {
                 circle.setRadius(CIRCLE_DIAMETER / 2);
                 circle.setCenterX(CIRCLE_DIAMETER / 2);
                 circle.setCenterY(CIRCLE_DIAMETER / 2);
+                circle.setSmooth(true);
 
                 circle.setTranslateX(col * (CIRCLE_DIAMETER + 5) + (CIRCLE_DIAMETER / 4));
                 circle.setTranslateY(row * (CIRCLE_DIAMETER + 5) + (CIRCLE_DIAMETER / 4));
@@ -229,7 +230,7 @@ public class Controller implements Initializable {
         });
     }
 
-    private void resetGame() {
+    public void resetGame() {
         insertedDiscsPane.getChildren().clear();
 
         for (int row = 0; row < insertedDiscArray.length; row++) {

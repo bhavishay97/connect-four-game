@@ -45,10 +45,10 @@ public class Main extends Application {
         Menu fileMenu = new Menu("File");
 
         MenuItem newGame = new MenuItem("New game");
-        newGame.setOnAction(actionEvent -> resetGame());
+        newGame.setOnAction(actionEvent -> controller.resetGame());
 
         MenuItem resetGame = new MenuItem("Reset game");
-        resetGame.setOnAction(actionEvent -> resetGame());
+        resetGame.setOnAction(actionEvent -> controller.resetGame());
 
         SeparatorMenuItem separatorMenuItem = new SeparatorMenuItem();
 
