@@ -82,7 +82,11 @@ public class Main extends Application {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("About the developer");
         alert.setHeaderText("Bhavishay Chawla");
-        alert.setContentText("To be updated later.");
+        alert.setContentText("I love coding and I spend most of my time in creating beautiful, useful and " +
+                                "sometimes fun applications and websites. Connect Four is one of them. " +
+                                "Do let me know your views about this little game made using Java. " +
+                                "My tech stack includes Java, JavaScript, React.js, Node.js and MongoDB. " +
+                                "For more awesome content visit me on GitHub (@bhavishay97).\n");
         alert.show();
     }
 

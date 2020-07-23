@@ -5,10 +5,7 @@ import javafx.application.Platform;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Point2D;
-import javafx.scene.control.Alert;
-import javafx.scene.control.Button;
-import javafx.scene.control.ButtonType;
-import javafx.scene.control.Label;
+import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.Pane;
 import javafx.scene.paint.Color;
@@ -33,8 +30,8 @@ public class Controller implements Initializable {
     private static final String discColor1 = "#24303e";
     private static final String discColor2 = "#4caa88";
 
-    private static String PLAYER_ONE = "Player 1";
-    private static String PLAYER_TWO = "Player 2";
+    private static String PLAYER_ONE = "Player One";
+    private static String PLAYER_TWO = "Player Two";
 
     private boolean isPlayerOneTurn = true;
 
@@ -50,6 +47,12 @@ public class Controller implements Initializable {
     @FXML
     public Label playerNameLabel;
 
+    @FXML
+    public TextField playerOneTextField, playerTwoTextField;
+
+    @FXML
+    public Button setNamesButton;
+
     private boolean isAllowedToInsert = true;
 
     public void createPlayground() {
@@ -61,6 +64,13 @@ public class Controller implements Initializable {
         for (Rectangle rectangle : rectangleList) {
             rootGridPane.add(rectangle, 0, 1);
         }
+
+        setNamesButton.setOnAction(actionEvent -> {
+            PLAYER_ONE = playerOneTextField.getText();
+            PLAYER_TWO = playerTwoTextField.getText();
+
+            playerNameLabel.setText(isPlayerOneTurn ? PLAYER_ONE : PLAYER_TWO );
+        });
 
     }
 
@@ -216,7 +226,7 @@ public class Controller implements Initializable {
 
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
         alert.setTitle("Connect Four");
-        alert.setHeaderText("The winner is " +winner);
+        alert.setHeaderText("The winner is: " +winner.toUpperCase());
         alert.setContentText("Want to play again?");
 
         ButtonType yesBtn = new ButtonType("Yes");
@@ -240,11 +250,9 @@ public class Controller implements Initializable {
     public void resetGame() {
         insertedDiscsPane.getChildren().clear();
 
-        for (int row = 0; row < insertedDiscArray.length; row++) {
-            for (int col = 0; col < insertedDiscArray.length; col++) {
-                insertedDiscArray[row][col] = null;
-            }
-        }
+        for (int row = 0; row < insertedDiscArray.length; row++)
+            for (int col = 0; col < insertedDiscArray[row].length; col++) insertedDiscArray[row][col] = null;
+
         isPlayerOneTurn = true;
         playerNameLabel.setText(PLAYER_ONE);
 
@@ -267,6 +275,7 @@ public class Controller implements Initializable {
 
     @Override
     public void initialize(URL url, ResourceBundle resourceBundle) {
-
+        playerOneTextField.setFocusTraversable(false);
+        playerTwoTextField.setFocusTraversable(false);
     }
 }
