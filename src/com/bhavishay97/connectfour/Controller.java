@@ -50,6 +50,8 @@ public class Controller implements Initializable {
     @FXML
     public Label playerNameLabel;
 
+    private boolean isAllowedToInsert = true;
+
     public void createPlayground() {
 
         Shape rectangleWithHoles = getGameGrid();
@@ -98,7 +100,11 @@ public class Controller implements Initializable {
 
             final int finalCol = col;
             rectangle.setOnMouseClicked(event -> {
-                insertDisc(new Disc(isPlayerOneTurn), finalCol);
+                if (isAllowedToInsert) {
+                    isAllowedToInsert = false;
+                    insertDisc(new Disc(isPlayerOneTurn), finalCol);
+                }
+
             });
 
             rectangleList.add(rectangle);
@@ -123,11 +129,12 @@ public class Controller implements Initializable {
 
         disc.setTranslateX(column * (CIRCLE_DIAMETER + 5) + (CIRCLE_DIAMETER / 4));
 
+        final int finalRow = row;
         TranslateTransition translateTransition = new TranslateTransition(Duration.seconds(0.5), disc);
         translateTransition.setToY(row * (CIRCLE_DIAMETER + 5) + (CIRCLE_DIAMETER / 4));
-        final int finalRow = row;
         translateTransition.setOnFinished(actionEvent -> {
 
+            isAllowedToInsert = true;
             if (gameEnded(finalRow, column)) {
                 gameOver();
                 return;

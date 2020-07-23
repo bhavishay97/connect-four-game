@@ -106,10 +106,6 @@ public class Main extends Application {
         System.exit(0);
     }
 
-    private void resetGame() {
-        // TODO
-    }
-
     public static void main(String[] args) {
         launch(args);
     }
